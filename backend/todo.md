@@ -1,0 +1,26 @@
+- Autenticación y autorización:
+  - Implementar auten(cación u(lizando JWT (JSON Web Tokens).
+  - Soportar múl(ples roles: usuario normal, administrador, y operador de logís(ca. 
+  - Implementar auten(cación con redes sociales (Google, Facebook) como opción adicional.
+- Ges(ón de usuarios (debe tener inicialmente, al menos 20 usuarios):
+  - Los usuarios podrán registrarse, iniciar sesión y editar sus perfiles.
+  - Los administradores podrán ges(onar los usuarios (agregar, eliminar, actualizar). 
+  - Los usuarios tendrán un historial de compras accesible desde su perfil.
+  - Opción para que los usuarios eliminen sus cuentas si lo desean.
+- Ges(ón de productos (debe tener inicialmente, al menos 100 productos completos):
+  - Los administradores podrán agregar, editar y eliminar productos.
+  - Cada producto debe tener imágenes, una descripción detallada, categoría, marca y especificaciones técnicas.
+  - Implementar un sistema de categorías jerárquicas (ejemplo: Electrónica > Computadoras > Laptops).
+  - Implementar descuentos promocionales que pueden aplicarse a ciertos productos o categorías (porcentaje o can(dad fija).
+- Carrito de compras:
+  - Los usuarios podrán agregar productos al carrito, modificar las can(dades, y eliminar productos.
+  - Se deberá mantener el estado del carrito aunque el usuario cierre sesión o cierre el navegador (persistencia local o en la base de datos).
+- Pedidos y proceso de pago:
+  - Los usuarios podrán confirmar su compra desde el carrito. - Implementar un flujo completo de pago que incluya:
+  - Dirección de envío y método de pago (simulado).
+  - Estado de los pedidos: pendiente, en preparación, enviado, entregado.
+  - Los administradores y operadores logís(cos pueden cambiar el estado del pedido.
+  - Integrar un simulador de pagos para completar transacciones, que permita a los usuarios pagar con tarjeta de crédito (simulada).
+- Ges(ón de inventario:
+  - Implementar un sistema de inventario que reduzca la can(dad disponible cuando se realizan pedidos.
+  - Alertar a los administradores cuando un producto esté por quedarse sin stock.

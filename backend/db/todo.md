@@ -1,0 +1,4 @@
+- Ges(ón de usuarios, productos, y pedidos.
+- Manejo de sesiones y persistencia del carrito.
+- Relaciones (en caso de usar bases de datos SQL) o documentos anidados (si usan NoSQL). 
+- Op(mización de consultas: Las consultas a la base de datos deben ser eficientes, especialmente cuando se trata de buscar productos o ges(onar inventario.

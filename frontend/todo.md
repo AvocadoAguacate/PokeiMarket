@@ -1,0 +1,20 @@
+
+- Página de inicio personalizada:
+  - Mostrar productos destacados, ofertas del día y categorías principales. - Implementar un slider de promociones en la página de inicio.
+- Página de productos:
+  - Listado de productos con filtros avanzados por precio, categoría, marca, y popularidad.
+  - Implementar un sistema de búsqueda con sugerencias automá(cas basado en palabras clave.
+  - Los productos deben mostrarse con imágenes y un sistema de calificaciones/reseñas.
+- Detalles del producto:
+  - Página individual del producto con imágenes, descripción, especificaciones técnicas y reseñas.
+  - Los usuarios registrados podrán escribir reseñas y dar una calificación (de 1 a 5 estrellas).
+  - Mostrar productos relacionados o similares (simular, con campos en los productos o alguna heurís(ca simple que determine el match).
+- Carrito de compras:
+  - Mostrar productos añadidos al carrito, el precio total, y permi(r modificar las can(dades o eliminar productos.
+  - Agregar un cálculo del costo de envío según la dirección del usuario (puede ser fijo o basado en reglas simples).
+- Proceso de compra (checkout):
+  - Flujo dividido en varios pasos: dirección de envío, método de pago, resumen de pedido.
+  - Implementar validaciones en (empo real para asegurar que los datos del formulario sean correctos.
+- Perfil de usuario:
+  - El perfil del usuario permi(rá ver y editar sus datos personales.
+  - Implementar un historial de pedidos, donde el usuario pueda revisar el estado de sus pedidos anteriores.
