@@ -15,7 +15,6 @@ erDiagram
         int speed
         int weight
         int height
-        int generation 
     }
     poke_move {
         int id
@@ -40,6 +39,7 @@ erDiagram
         int mov4
         int level
         int gender_id
+        int generation 
     }
     poke_product }|--|| pokemon:""
     poke_product }|--|| poke_move:""
@@ -77,4 +77,10 @@ erDiagram
     }
     move_generation }|--|| pokemon_x_moves:""
     move_learning_method }|--|{ pokemon_x_moves:""
+    pokemon_generation{
+        int id
+        int pokemon_id
+        int generation
+    }
+    pokemon_generation }|--|| pokemon:""
 ```
