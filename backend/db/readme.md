@@ -248,4 +248,26 @@ erDiagram
     }
     user ||--|| staff:""
     store ||--|| staff:""
+    saved_item{
+        int id
+        int poke_item_id
+        int poke_product_id
+        int quantity
+        int client_id
+        %% nulleable item_id y pokemon_id
+        %% pero hacer un check para que solo uno sea null
+    }
+    saved_item ||--|| user:""
+    saved_item ||--|| poke_item:""
+    saved_item ||--|| poke_product:""
+    saved_item_adds{
+        int id
+        int saved_item_id
+        int mov1
+        int mov2
+        int mov3
+        int mov4
+        int level
+    }
+    saved_item ||--|| saved_item_adds:""
 ```
