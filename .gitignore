@@ -1,2 +1,6 @@
 so.js
 result.json
+backend/node_modules/
+backend/.env
+backend/.vscode
+frontend/.env
