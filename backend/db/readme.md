@@ -219,21 +219,21 @@ erDiagram
         string name
     }
     contact ||--|| contact_type:""
-    user{
-        int id
-        %% id = auth.users.id
+    %% auth.user.user_metadata
+    auth_user_user_metadata{
+    %% id of auth.user
         int type_id
         text name
         text check_sum
     }
-    contact ||--|| user:""
-    order ||--|| user:""
-    address ||--|| user:""
+    contact ||--|| auth_user_user_metadata""
+    order ||--|| auth_user_user_metadata""
+    address ||--|| auth_user_user_metadata""
     users_type{
         int id
         string name
     }
-    user ||--|| users_type:""
+    auth_user_user_metadata||--|| users_type:""
     store{
         int id
         string name
@@ -246,7 +246,7 @@ erDiagram
         int store_id
         int user_id
     }
-    user ||--|| staff:""
+    auth_user_user_metadata||--|| staff:""
     store ||--|| staff:""
     saved_item{
         int id
@@ -257,7 +257,7 @@ erDiagram
         %% nulleable item_id y pokemon_id
         %% pero hacer un check para que solo uno sea null
     }
-    saved_item ||--|| user:""
+    saved_item ||--|| auth_user_user_metadata""
     saved_item ||--|| poke_item:""
     saved_item ||--|| poke_product:""
     saved_item_adds{
