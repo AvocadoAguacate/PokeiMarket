@@ -226,9 +226,9 @@ erDiagram
         text name
         text check_sum
     }
-    contact ||--|| auth_user_user_metadata""
-    order ||--|| auth_user_user_metadata""
-    address ||--|| auth_user_user_metadata""
+    contact ||--|| auth_user_user_metadata:""
+    order ||--|| auth_user_user_metadata:""
+    address ||--|| auth_user_user_metadata:""
     users_type{
         int id
         string name
@@ -257,7 +257,7 @@ erDiagram
         %% nulleable item_id y pokemon_id
         %% pero hacer un check para que solo uno sea null
     }
-    saved_item ||--|| auth_user_user_metadata""
+    saved_item ||--|| auth_user_user_metadata:""
     saved_item ||--|| poke_item:""
     saved_item ||--|| poke_product:""
     saved_item_adds{
