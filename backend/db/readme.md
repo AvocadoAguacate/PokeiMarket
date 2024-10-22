@@ -263,6 +263,7 @@ erDiagram
     saved_item_adds{
         int id
         int saved_item_id
+        int gender_id
         int mov1
         int mov2
         int mov3
