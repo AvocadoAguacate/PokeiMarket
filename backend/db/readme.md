@@ -271,4 +271,27 @@ erDiagram
         int level
     }
     saved_item ||--|| saved_item_adds:""
+    wish_pokemon{
+        int id
+        int status_id
+        int admin_id
+        datetime last_update
+        int interest
+        %% cantidad de usuarios que quieren el pokemon
+        int pokedex_id
+        %% pokedex_id no es llave foranea 
+        text chck_sum
+    }
+    wish_pokemon ||--|| status:""
+    wish_pokemon ||--|| auth_user_user_metadata:""
+    wish_x_user{
+        int id
+        int wish_id
+        int user_id
+        int saved_id
+    }
+    wish_x_user ||--|| auth_user_user_metadata:""
+    wish_x_user ||--|| wish_pokemon:""
+    wish_x_user ||--|| saved_item:""
+
 ```
