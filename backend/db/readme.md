@@ -66,6 +66,7 @@ erDiagram
         int generation
         %% generation > 0
         int method_id
+        int cost
     }
 
     pokemon_x_moves }|--|| pokemon:""
@@ -96,88 +97,130 @@ erDiagram
 
     pokemon_x_type }|--|| pokemon:""
     pokemon_x_type }|--|{ poke_type:""
+
+    poke_item_type{
+        int id
+        string name
+    }
+
+    status{
+        int id
+        string name
+    }
+
+    store{
+        int id
+        string name
+    }
+
 %% Pokeballs, Heals, Antidoques, Berrys
     poke_item{
         int id
         string name
         int cost
+        %% cost > 0
         int type_id
     }
+
+    poke_item ||--|| poke_item_type:""
+
     poke_item_stock{
         int id
         int item_id
         int pc_zone_id
         int status_id
     }
-    poke_item ||--|| poke_item_stock:""
-    poke_item_type{
-        int id
-        string name
-    }
-    poke_item ||--|| poke_item_type:""
-    status{
-        int id
-        string name
-    }
-    status ||--|| poke_item_stock:""
-    status ||--|| pokemon_stock_item:""
-    poke_item }|--|| poke_item_type:""
+
+    poke_item_stock ||--|| poke_item:""
+    poke_item_stock ||--|| status:""
+    poke_item_stock }|--|| store:""
+    %% pc_zone_id = store.id
+
     pokemon_stock_item{
         int id
         int poke_product_id
         int pc_zone_id
         int status_id
     }
-    pokemon_stock_item ||--|| poke_product:""
+
+    pokemon_stock_item ||--|| poke_product:"" 
+    poke_item_stock }|--|| store:""
+    %% pc_zone_id = store.id
+    pokemon_stock_item ||--|| status:""   
+%% ----------------------------------------------
+
+    order{
+        int id
+        datetime date
+        int client_id
+        %% cliend_id = FK auth.user.id
+        int final_price
+        %% final_price NUMERIC(10, 2)
+        int discount
+        %% discount NUMERIC(10, 2)
+        int taxes
+        %% taxes NUMERIC(10, 2)
+        string check_sum
+    }
+
     order_item {
         int id
         int order_id
         int item_stock_id
         int pokemon_stock_id
-        int unit_cost
-        int quantity
         %% nulleable item_id y pokemon_id
         %% pero hacer un check para que solo uno sea null
+        int unit_cost
+        %% unit_cost > 0
+        int quantity
+        %% quantity > 0
         string check_sum
     }
+
+    order_item ||--|| order:""
     order_item ||--|| poke_item_stock:""
     order_item ||--|| pokemon_stock_item:""
-    order_item ||--|| order_item_adds:""
-    order_item ||--|| order:""
+    
     order_item_adds{
         int id
         int order_item_id
         int mov1
+        %% mov1 = FK pokemon_x_moves.id
         int mov2
+        %% mov2 = FK pokemon_x_moves.id
         int mov3
+        %% mov3 = FK pokemon_x_moves.id
         int mov4
+        %% mov4 = FK pokemon_x_moves.id
         int level
+        %% level > 0
     }
-    order{
+
+    order_item_adds ||--|| order_item:""
+
+    discount{
         int id
-        datetime date
-        int client_id
-        int final_price
-        int discount
+        string name
+        int admin_id
+        %% admin_id = FK auth.user.id
+        int percent_discount
+        datetime start
+        datetime finish
+        %% check start before finish
+        string code
         string check_sum
     }
-    order ||--|| order_discount:""
+    
     order_discount{
         int id
         int discount_id
         int order_id
         string check_sum
     }
-    discount{
-        int id
-        string name
-        int admin_id
-        int percent_discount
-        datetime start
-        datetime finish
-        string check_sum
-    }
-    discount ||--|| order_discount:""
+
+    order_discount ||--|| discount:""
+    order_discount ||--|| order:""
+
     delivery_type{
         int id
         string name
@@ -251,10 +294,7 @@ erDiagram
         string name
     }
     auth_user_user_metadata||--|| users_type:""
-    store{
-        int id
-        string name
-    }
+
     store ||--|| address:""
     store ||--|| poke_item_stock:""
     store ||--|| pokemon_stock_item:""
