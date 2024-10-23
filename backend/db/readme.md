@@ -13,72 +13,89 @@ erDiagram
         int special_attack
         int special_defense
         int speed
+        %% base stats 0 < baseStat < 256
         int weight
+        %% weight > 0
         int height
+        %% height > 0
     }
-    poke_move {
-        int id
-        string name
-    }
-    pokemon_x_moves {
-        ind id
-        int pokemon_id
-        int move_id
-        int generation_id
-        int method_id
-    }
-    pokemon ||--|{ pokemon_x_moves:""
-    poke_move ||--|{ pokemon_x_moves:""
-    poke_product {
-        int id
-        int pokemon_id
-        int gender_id
-        int generation
-        int base_cost
-        string check_sum 
-    }
-    poke_product }|--|| pokemon:""
-    poke_product }|--|| poke_move:""
-    poke_type{
-        int id
-        string name
-    }
-    pokemon_x_type {
-        int id
-        int pokemon_id
-        int type_id
-    }
-    pokemon_x_type }|--|| pokemon:""
-    pokemon_x_type }|--|{ poke_type:""
+
     poke_gender {
         int id
         string name
     }
+
+    learning_method {
+        int id
+        string name
+    }
+
+    poke_move {
+        int id
+        string name
+    }
+
+    poke_type{
+        int id
+        string name
+    }
+
     pokemon_x_gender {
         int id
         string url
         int pokemon_id
         int gender_id
     }
+
     pokemon_x_gender }|--|| pokemon:""
-    pokemon_x_gender }|--|{ poke_gender:"male | female | shiny"
-    pokemon_x_gender }|--|| poke_product:""
-    move_generation {
-        int id
-        int generation
-    }
-    move_learning_method {
-        int id
-        string name
-    }
-    move_generation }|--|| pokemon_x_moves:""
-    move_learning_method }|--|{ pokemon_x_moves:""
+    pokemon_x_gender }|--|{ poke_gender:""
+    
+%% lista de generaciones de cada pokemon 
     pokemon_generation{
         int id
         int pokemon_id
         int generation
+        %% generation > 0
     }
     pokemon_generation }|--|| pokemon:""
+
+    pokemon_x_moves {
+        ind id
+        int pokemon_id
+        int move_id
+        int generation
+        %% generation > 0
+        int method_id
+    }
+
+    pokemon_x_moves }|--|| pokemon:""
+    pokemon_x_moves }|--|| poke_move:""
+    pokemon_x_moves ||--|{ learning_method:""
+    
+    poke_product {
+        int id
+        int pokemon_id
+        int gender_id
+        int generation
+        %% generation > 0
+        int base_cost
+        %% base_cost > 0
+        string check_sum 
+    }
+
+    poke_product }|--|| pokemon:""
+    poke_product }|--|| pokemon_x_gender:""
+    %% gender_id = pokemon_x_gender.id
+
+
+    pokemon_x_type {
+        int id
+        int pokemon_id
+        int type_id
+    }
+
+    pokemon_x_type }|--|| pokemon:""
+    pokemon_x_type }|--|{ poke_type:""
 %% Pokeballs, Heals, Antidoques, Berrys
     poke_item{
         int id
