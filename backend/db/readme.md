@@ -152,7 +152,7 @@ erDiagram
         int id
         datetime date
         int client_id
-        %% cliend_id = FK auth.user.id
+        %% cliend_id = FK auth.users.id
         int final_price
         %% final_price NUMERIC(10, 2)
         int discount
@@ -209,7 +209,7 @@ erDiagram
         string code
         string check_sum
     }
-    
+
     discount||--|| staff:""
     
     order_discount{
@@ -270,7 +270,7 @@ erDiagram
     address ||--|| city:""
 
     auth_user_user_metadata{
-    %% id of auth.user
+    %% id of auth.users
         int type_id
         text name
         text check_sum
@@ -282,7 +282,7 @@ erDiagram
         int id
         int store_id
         int user_id
-        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.user (id) ON DELETE CASCADE
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
         text check_sum
     }
 
@@ -301,7 +301,7 @@ erDiagram
     address_x_client {
         int id
         int client_id 
-        %% CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.user (id) ON DELETE CASCADE
+        %% CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.users (id) ON DELETE CASCADE
         int address_id
     }
     address_x_client ||--|| address:""
@@ -332,7 +332,7 @@ erDiagram
     contact{
         int id
         int user_id
-        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.user (id) ON DELETE CASCADE
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
         string value
         int type_id
     }
@@ -398,7 +398,7 @@ erDiagram
         int id
         int wish_id
         int user_id
-        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.user (id) ON DELETE CASCADE
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
         int saved_id
     }
 
