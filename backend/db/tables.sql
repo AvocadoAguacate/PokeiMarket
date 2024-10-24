@@ -9,8 +9,11 @@ CREATE TABLE pokemon (
     special_defense INT CHECK (special_defense BETWEEN 0 AND 255),
     speed INT CHECK (speed BETWEEN 0 AND 255),
     weight INT CHECK (weight > 0),
-    height INT CHECK (height > 0)
+    height INT CHECK (height > 0),
+    name_tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', name)) STORED
 );
+
+CREATE INDEX pokemon_name_fulltext_idx ON pokemon USING GIN (name_tsv);
 
 -- Tabla de géneros de Pokémon
 CREATE TABLE poke_gender (
@@ -112,8 +115,11 @@ CREATE TABLE poke_item (
     name VARCHAR(100) NOT NULL,
     cost INT CHECK (cost > 0),
     type_id INT NOT NULL,
+    name_tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', name)) STORED
     CONSTRAINT fk_item_type FOREIGN KEY (type_id) REFERENCES poke_item_type (id) ON DELETE CASCADE
 );
+
+CREATE INDEX poke_item_name_fulltext_idx ON poke_item USING GIN (name_tsv);
 
 -- Tabla del inventario de ítems por tienda
 CREATE TABLE poke_item_stock (

@@ -18,6 +18,7 @@ erDiagram
         %% weight > 0
         int height
         %% height > 0
+        tsvector name_tsv
     }
 
     poke_gender {
@@ -120,6 +121,7 @@ erDiagram
         int cost
         %% cost > 0
         int type_id
+        tsvector name_tsv
     }
 
     poke_item ||--|| poke_item_type:""
@@ -221,7 +223,7 @@ erDiagram
 
     order_discount ||--|| discount:""
     order_discount ||--|| order:""
-%% ----------------------------------------------
+
     country{
         int id
         string name
