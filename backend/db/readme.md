@@ -147,7 +147,6 @@ erDiagram
     poke_item_stock }|--|| store:""
     %% pc_zone_id = store.id
     pokemon_stock_item ||--|| status:""   
-%% ----------------------------------------------
 
     order{
         int id
@@ -202,7 +201,7 @@ erDiagram
         int id
         string name
         int admin_id
-        %% admin_id = FK auth.user.id
+        %% CONSTRAINT fk_admin FOREIGN KEY (admin_id) REFERENCES staff (id) ON DELETE CASCADE
         int percent_discount
         datetime start
         datetime finish
@@ -210,6 +209,8 @@ erDiagram
         string code
         string check_sum
     }
+    
+    discount||--|| staff:""
     
     order_discount{
         int id
@@ -220,12 +221,92 @@ erDiagram
 
     order_discount ||--|| discount:""
     order_discount ||--|| order:""
+%% ----------------------------------------------
+    country{
+        int id
+        string name
+    }
 
+    country ||--|| address:""
+    
+    state{
+        int id
+        string name
+        int country_id
+    }
+    
+    state ||--|| country:""
+    
+    city{
+        int id
+        string name
+        int state_id
+    }
+    
+    city ||--|| state:""
+    
     delivery_type{
         int id
         string name
     }
-    delivery_type ||--|| order_delivery:""
+
+    contact_type{
+        int id
+        string name
+    }
+
+    users_type{
+        int id
+        string name
+    }
+
+    address {
+        int id
+        geometry location
+        int postal_code
+        int city_id
+    }
+
+    address ||--|| city:""
+
+    auth_user_user_metadata{
+    %% id of auth.user
+        int type_id
+        text name
+        text check_sum
+    }
+
+    auth_user_user_metadata||--|| users_type:""
+
+    staff{
+        int id
+        int store_id
+        int user_id
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.user (id) ON DELETE CASCADE
+        text check_sum
+    }
+
+    staff||--|| auth_user_user_metadata:""
+    staff||--|| store:""
+
+    address_x_store {
+        int id
+        int store_id
+        int address_id
+    }
+
+    address_x_store ||--|| address:""
+    address_x_store ||--|| store:""
+
+    address_x_client {
+        int id
+        int client_id 
+        %% CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.user (id) ON DELETE CASCADE
+        int address_id
+    }
+    address_x_client ||--|| address:""
+    address_x_client ||--|| auth_user_user_metadata:""
+    
     order_delivery{
         int id
         int order_id
@@ -236,102 +317,72 @@ erDiagram
         datetime expected_delevery_date
         time start_time_client
         time end_time_client
+        %% start_time_client before end_time_client
         int operator_id
+        %% CONSTRAINT fk_operator FOREIGN KEY (operator_id) REFERENCES staff (id) ON DELETE CASCADE,
         string check_sum
     }
-    status ||--|| order_delivery:""
+
+    order_delivery ||--|| order:""
+    order_delivery ||--|| status:""
+    order_delivery ||--|| delivery_type:""
     order_delivery ||--|| address:""
-    address {
-        int id
-        int client_id
-        int store_id
-        geometry location
-        int postal_code
-        int country_id
-        int state_id
-        int city_id
-        %% client y store id puede ser null
-        %% pero hay que hacer check para que solo uno sea null
-    }
-    country{
-        int id
-        string name
-    }
-    country ||--|| address:""
-    state{
-        int id
-        string name
-    }
-    state ||--|| address:""
-    city{
-        int id
-        string name
-    }
-    city ||--|| address:""
+    order_delivery ||--|| staff:""
+
     contact{
         int id
         int user_id
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.user (id) ON DELETE CASCADE
         string value
         int type_id
     }
-    contact_type{
-        int id
-        string name
-    }
-    contact ||--|| contact_type:""
-    %% auth.user.user_metadata
-    auth_user_user_metadata{
-    %% id of auth.user
-        int type_id
-        text name
-        text check_sum
-    }
-    contact ||--|| auth_user_user_metadata:""
-    order ||--|| auth_user_user_metadata:""
-    address ||--|| auth_user_user_metadata:""
-    users_type{
-        int id
-        string name
-    }
-    auth_user_user_metadata||--|| users_type:""
 
-    store ||--|| address:""
-    store ||--|| poke_item_stock:""
-    store ||--|| pokemon_stock_item:""
-    staff{
-        int id
-        int store_id
-        int user_id
-    }
-    auth_user_user_metadata||--|| staff:""
-    store ||--|| staff:""
+    contact ||--|| contact_type:""
+    contact ||--|| auth_user_user_metadata:""
+
+
+
     saved_item{
         int id
         int poke_item_id
         int poke_product_id
         int quantity
+        %% quantity > 0
         int client_id
         %% nulleable item_id y pokemon_id
         %% pero hacer un check para que solo uno sea null
     }
+
     saved_item ||--|| auth_user_user_metadata:""
     saved_item ||--|| poke_item:""
     saved_item ||--|| poke_product:""
+
     saved_item_adds{
         int id
         int saved_item_id
         int gender_id
+        %% CONSTRAINT fk_gender FOREIGN KEY (gender_id) REFERENCES pokemon_x_gender (id) ON DELETE CASCADE
         int mov1
+        %% CONSTRAINT fk_mov1 FOREIGN KEY (mov1) REFERENCES pokemon_x_moves (id) ON DELETE CASCADE 
         int mov2
+        %% CONSTRAINT fk_mov2 FOREIGN KEY (mov1) REFERENCES pokemon_x_moves (id) ON DELETE CASCADE 
         int mov3
+        %% CONSTRAINT fk_mov3 FOREIGN KEY (mov1) REFERENCES pokemon_x_moves (id) ON DELETE CASCADE 
         int mov4
+        %% CONSTRAINT fk_mov4 FOREIGN KEY (mov1) REFERENCES pokemon_x_moves (id) ON DELETE CASCADE 
         int level
+        %% level > 0
     }
-    saved_item ||--|| saved_item_adds:""
+
+    saved_item_adds ||--|| saved_item:""
+    saved_item_adds ||--|| pokemon_x_gender:""
+    saved_item_adds ||--|| pokemon_x_moves:""
+
     wish_pokemon{
         int id
         int status_id
         int admin_id
+        %% CONSTRAINT fk_admin FOREIGN KEY (admin_id) REFERENCES staff (id) ON DELETE CASCADE
         datetime last_update
         int interest
         %% cantidad de usuarios que quieren el pokemon
@@ -339,16 +390,20 @@ erDiagram
         %% pokedex_id no es llave foranea 
         text chck_sum
     }
+
     wish_pokemon ||--|| status:""
-    wish_pokemon ||--|| auth_user_user_metadata:""
+    wish_pokemon ||--|| staff:""
+
     wish_x_user{
         int id
         int wish_id
         int user_id
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.user (id) ON DELETE CASCADE
         int saved_id
     }
-    wish_x_user ||--|| auth_user_user_metadata:""
+
     wish_x_user ||--|| wish_pokemon:""
+    wish_x_user ||--|| auth_user_user_metadata:""
     wish_x_user ||--|| saved_item:""
 
 ```
