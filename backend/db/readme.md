@@ -941,3 +941,64 @@ erDiagram
     wish_x_user ||--|| auth_user_user_metadata:""
     wish_x_user ||--|| saved_item:""
 ```
+
+## Logs
+
+In this project, we have implemented a minimal logging mechanism focused on specific tables deemed essential for auditing purposes. While the primary emphasis of the project is not on backend functionality, we recognized the importance of maintaining a basic level of accountability. As such, we chose to log changes in key tables that are critical for ensuring data integrity and transparency. This approach allows us to capture important modifications without overwhelming the project's scope, ensuring that we maintain necessary oversight while keeping the backend requirements streamlined.
+
+```mermaid
+erDiagram
+    POKE_PRODUCT_LOG {
+        SERIAL id PK
+        INT poke_product_id
+        INT staff_id
+        INT previous_price
+        INT new_price
+        TIMESTAMP change_timestamp
+        VARCHAR check_sum
+    }
+
+    POKE_ITEM_LOG {
+        SERIAL id PK
+        INT poke_item_id
+        INT staff_id
+        INT previous_cost
+        INT new_cost
+        TIMESTAMP change_timestamp
+        VARCHAR check_sum
+    }
+
+    DISCOUNT_LOG {
+        SERIAL id PK
+        INT discount_id
+        INT admin_id
+        INT previous_percent_discount
+        INT new_percent_discount
+        TIMESTAMP change_timestamp
+        VARCHAR check_sum
+    }
+
+    STAFF_LOG {
+        SERIAL id PK
+        INT staff_id
+        UUID admin_id
+        INT previous_store_id
+        INT new_store_id
+        INT previous_type_id
+        INT new_type_id
+        BOOLEAN previous_isDeleted
+        BOOLEAN new_isDeleted
+        TIMESTAMP change_timestamp
+        TEXT check_sum
+    }
+
+    POKE_PRODUCT_LOG ||..|| POKE_PRODUCT : ""
+    POKE_ITEM_LOG ||..|| POKE_ITEM : ""
+    DISCOUNT_LOG ||..|| DISCOUNT : ""
+    STAFF_LOG ||..|| STAFF : ""
+
+    POKE_PRODUCT_LOG ||..|| STAFF : ""
+    POKE_ITEM_LOG ||..|| STAFF : ""
+    DISCOUNT_LOG ||..|| STAFF : ""
+    STAFF_LOG ||..|| AUTH_USERS : ""
+```
