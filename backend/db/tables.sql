@@ -1,4 +1,3 @@
--- Tabla principal de Pokémon
 CREATE TABLE pokemon (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -15,31 +14,26 @@ CREATE TABLE pokemon (
 
 CREATE INDEX pokemon_name_fulltext_idx ON pokemon USING GIN (name_tsv);
 
--- Tabla de géneros de Pokémon
 CREATE TABLE poke_gender (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
--- Tabla de métodos de aprendizaje
 CREATE TABLE learning_method (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
--- Tabla de movimientos de Pokémon
 CREATE TABLE poke_move (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
--- Tabla de tipos de Pokémon
 CREATE TABLE poke_type (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
--- Relación entre Pokémon y Género
 CREATE TABLE pokemon_x_gender (
     id SERIAL PRIMARY KEY,
     url TEXT,
@@ -49,7 +43,6 @@ CREATE TABLE pokemon_x_gender (
     CONSTRAINT fk_gender FOREIGN KEY (gender_id) REFERENCES poke_gender (id) ON DELETE CASCADE
 );
 
--- Tabla para las generaciones de cada Pokémon
 CREATE TABLE pokemon_generation (
     id SERIAL PRIMARY KEY,
     pokemon_id INT NOT NULL,
@@ -57,7 +50,6 @@ CREATE TABLE pokemon_generation (
     CONSTRAINT fk_pokemon_gen FOREIGN KEY (pokemon_id) REFERENCES pokemon (id) ON DELETE CASCADE
 );
 
--- Relación entre Pokémon y movimientos
 CREATE TABLE pokemon_x_moves (
     id SERIAL PRIMARY KEY,
     pokemon_id INT NOT NULL,
@@ -70,7 +62,6 @@ CREATE TABLE pokemon_x_moves (
     CONSTRAINT fk_method FOREIGN KEY (method_id) REFERENCES learning_method (id) ON DELETE CASCADE
 );
 
--- Tabla para los productos relacionados con Pokémon
 CREATE TABLE poke_product (
     id SERIAL PRIMARY KEY,
     pokemon_id INT NOT NULL,
@@ -82,7 +73,6 @@ CREATE TABLE poke_product (
     CONSTRAINT fk_product_gender FOREIGN KEY (gender_id) REFERENCES pokemon_x_gender (id) ON DELETE CASCADE
 );
 
--- Relación entre Pokémon y tipos
 CREATE TABLE pokemon_x_type (
     id SERIAL PRIMARY KEY,
     pokemon_id INT NOT NULL,
@@ -91,25 +81,22 @@ CREATE TABLE pokemon_x_type (
     CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES poke_type (id) ON DELETE CASCADE
 );
 
--- Tabla de tipos de ítems
 CREATE TABLE poke_item_type (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
--- Tabla de estados
 CREATE TABLE status (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL
 );
 
--- Tabla de tiendas (o zonas de PC)
 CREATE TABLE store (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
+    name VARCHAR(100) NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
 );
 
--- Tabla de ítems (como Pokéballs, curas, etc.)
 CREATE TABLE poke_item (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -121,7 +108,6 @@ CREATE TABLE poke_item (
 
 CREATE INDEX poke_item_name_fulltext_idx ON poke_item USING GIN (name_tsv);
 
--- Tabla del inventario de ítems por tienda
 CREATE TABLE poke_item_stock (
     id SERIAL PRIMARY KEY,
     item_id INT NOT NULL,
@@ -132,7 +118,6 @@ CREATE TABLE poke_item_stock (
     CONSTRAINT fk_status FOREIGN KEY (status_id) REFERENCES status (id) ON DELETE CASCADE
 );
 
--- Tabla de inventario de productos Pokémon por tienda
 CREATE TABLE pokemon_stock_item (
     id SERIAL PRIMARY KEY,
     poke_product_id INT NOT NULL,
@@ -143,19 +128,19 @@ CREATE TABLE pokemon_stock_item (
     CONSTRAINT fk_status FOREIGN KEY (status_id) REFERENCES status (id) ON DELETE CASCADE
 );
 
--- Tabla de órdenes
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     date TIMESTAMP NOT NULL,
     client_id UUID NOT NULL, 
     final_price NUMERIC(10, 2) CHECK (final_price >= 0),
+    card_id INT NOT NULL,
     discount NUMERIC(10, 2) CHECK (discount >= 0),
     taxes NUMERIC(10, 2) CHECK (taxes > 0),
     check_sum VARCHAR(255),
-    CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.users (id) ON DELETE CASCADE
+    CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_card FOREIGN KEY (card_id) REFERENCES card (id) ON DELETE CASCADE
 );
 
--- Tabla de ítems de órdenes
 CREATE TABLE order_item (
     id SERIAL PRIMARY KEY,
     order_id INT NOT NULL,
@@ -173,7 +158,6 @@ CREATE TABLE order_item (
     )
 );
 
--- Tabla de adiciones a ítems de órdenes
 CREATE TABLE order_item_adds (
     id SERIAL PRIMARY KEY,
     order_item_id INT NOT NULL,
@@ -200,26 +184,29 @@ CREATE TABLE order_item_adds (
 CREATE TABLE staff (
     id SERIAL PRIMARY KEY,
     store_id INT NOT NULL,
+    type_id INT NOT NULL,
     user_id UUID NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
     check_sum TEXT NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE,
-    CONSTRAINT fk_store FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE
+    CONSTRAINT fk_store FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE,
+    CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES users_type (id) ON DELETE CASCADE
 );
 
--- Tabla de descuentos
 CREATE TABLE discount (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    promotion_code VARCHAR(50) NOT NULL UNIQUE,
     admin_id INT NOT NULL, 
     percent_discount INT CHECK (percent_discount >= 0 AND percent_discount <= 100),
     start TIMESTAMP NOT NULL,
     finish TIMESTAMP NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
     check_sum VARCHAR(255),
     CONSTRAINT fk_admin FOREIGN KEY (admin_id) REFERENCES staff (id) ON DELETE CASCADE,
     CONSTRAINT chk_discount_time CHECK (start < finish)
 );
 
--- Tabla de descuentos de órdenes
 CREATE TABLE order_discount (
     id SERIAL PRIMARY KEY,
     discount_id INT NOT NULL,
@@ -260,7 +247,7 @@ CREATE TABLE contact_type (
 
 CREATE TABLE users_type (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE address (
@@ -285,6 +272,7 @@ CREATE TABLE address_x_store (
     id SERIAL PRIMARY KEY,
     store_id INT NOT NULL,
     address_id INT NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_store FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE,
     CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE CASCADE
 );
@@ -293,6 +281,7 @@ CREATE TABLE address_x_client (
     id SERIAL PRIMARY KEY,
     client_id UUID NOT NULL,
     address_id INT NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.users (id) ON DELETE CASCADE,
     CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE CASCADE
 );
@@ -322,6 +311,7 @@ CREATE TABLE contact (
     user_id UUID NOT NULL,
     value TEXT NOT NULL,
     type_id INT NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE,
     CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES contact_type (id) ON DELETE CASCADE
 );
@@ -332,13 +322,15 @@ CREATE TABLE saved_item (
     poke_product_id INT,
     quantity INT CHECK (quantity > 0),
     client_id UUID NOT NULL,
+    status_id INT NOT NULL,
     CONSTRAINT chk_item_or_product CHECK (
         (poke_item_id IS NULL AND poke_product_id IS NOT NULL) OR
         (poke_item_id IS NOT NULL AND poke_product_id IS NULL)
     ),
     CONSTRAINT fk_client FOREIGN KEY (client_id) REFERENCES auth.users (id) ON DELETE CASCADE,
     CONSTRAINT fk_item FOREIGN KEY (poke_item_id) REFERENCES poke_item (id) ON DELETE SET NULL,
-    CONSTRAINT fk_product FOREIGN KEY (poke_product_id) REFERENCES poke_product (id) ON DELETE SET NULL
+    CONSTRAINT fk_product FOREIGN KEY (poke_product_id) REFERENCES poke_product (id) ON DELETE SET NULL,
+    CONSTRAINT fk_status FOREIGN KEY (status_id) REFERENCES status (id) ON DELETE SET NULL,
 );
 
 CREATE TABLE saved_item_adds (
@@ -383,8 +375,20 @@ CREATE TABLE wish_x_user (
     wish_id INT NOT NULL,
     user_id UUID NOT NULL,
     saved_id INT NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_wish FOREIGN KEY (wish_id) REFERENCES wish_pokemon (id) ON DELETE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE,
     CONSTRAINT fk_saved_item FOREIGN KEY (saved_id) REFERENCES saved_item (id) ON DELETE CASCADE
 );
 
+CREATE TABLE card (
+    id SERIAL PRIMARY KEY,
+    card_number BYTEA NOT NULL,
+    last_numbers VARCHAR(4) NOT NULL,
+    month INT NOT NULL CHECK (month BETWEEN 1 AND 12),
+    year INT NOT NULL,
+    card_code BYTEA NOT NULL,
+    user_id INT NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
+);

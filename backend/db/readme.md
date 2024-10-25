@@ -155,6 +155,7 @@ erDiagram
         datetime date
         int client_id
         %% cliend_id = FK auth.users.id
+        int card_id
         int final_price
         %% final_price NUMERIC(10, 2)
         int discount
@@ -163,6 +164,8 @@ erDiagram
         %% taxes NUMERIC(10, 2)
         string check_sum
     }
+
+    order }|--|{ card:""
 
     order_item {
         int id
@@ -202,6 +205,8 @@ erDiagram
     discount{
         int id
         string name
+        string promotion_code
+        %% Unique
         int admin_id
         %% CONSTRAINT fk_admin FOREIGN KEY (admin_id) REFERENCES staff (id) ON DELETE CASCADE
         int percent_discount
@@ -283,6 +288,8 @@ erDiagram
     staff{
         int id
         int store_id
+        int type_id
+        %% CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES user (id) ON DELETE CASCADE
         int user_id
         %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
         text check_sum
@@ -290,6 +297,7 @@ erDiagram
 
     staff||--|| auth_user_user_metadata:""
     staff||--|| store:""
+    staff||--|| users_type:""
 
     address_x_store {
         int id
@@ -348,6 +356,7 @@ erDiagram
         int id
         int poke_item_id
         int poke_product_id
+        int status_id
         int quantity
         %% quantity > 0
         int client_id
@@ -358,6 +367,7 @@ erDiagram
     saved_item ||--|| auth_user_user_metadata:""
     saved_item ||--|| poke_item:""
     saved_item ||--|| poke_product:""
+    saved_item ||--|| status:""
 
     saved_item_adds{
         int id
@@ -408,6 +418,21 @@ erDiagram
     wish_x_user ||--|| auth_user_user_metadata:""
     wish_x_user ||--|| saved_item:""
 
+    card{
+        int id
+        BYTEA card_number
+        string last_numbers
+        %% VARCHAR(4)
+        int month
+        %% 1 <= month <=12 
+        int year
+        %% year > 2024
+        BYTEA card_code
+        int user_id
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
+    }
+
+    card ||--||auth_user_user_metadata:""
 ```
 
 ### Pokemons
@@ -607,6 +632,7 @@ erDiagram
         datetime date
         int client_id
         %% cliend_id = FK auth.users.id
+        int card_id
         int final_price
         %% final_price NUMERIC(10, 2)
         int discount
@@ -615,6 +641,8 @@ erDiagram
         %% taxes NUMERIC(10, 2)
         string check_sum
     }
+
+    order }|--|{ card:""
 
     order_item {
         int id
@@ -694,15 +722,32 @@ erDiagram
     staff{
         int id
         int store_id
+        int type_id
+        %% CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES user (id) ON DELETE CASCADE
         int user_id
-        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users_type (id) ON DELETE CASCADE
         text check_sum
     }
 
     staff||--|| auth_user_user_metadata:""
     staff||--|| store:""
+    staff||--|| users_type:""
 
+    card{
+        int id
+        BYTEA card_number
+        string last_numbers
+        %% VARCHAR(4)
+        int month
+        %% 1 <= month <=12 
+        int year
+        %% year > 2024
+        BYTEA card_code
+        int user_id
+        %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
+    }
 
+    card ||--||auth_user_user_metadata:""
 ```
 
 ### Delivery
@@ -784,6 +829,7 @@ erDiagram
         datetime date
         int client_id
         %% cliend_id = FK auth.users.id
+        int card_id
         int final_price
         %% final_price NUMERIC(10, 2)
         int discount
@@ -792,9 +838,14 @@ erDiagram
         %% taxes NUMERIC(10, 2)
         string check_sum
     }
+
+    order }|--|{ card:""
+
     staff{
         int id
         int store_id
+        int type_id
+        %% CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES user (id) ON DELETE CASCADE
         int user_id
         %% CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES auth.users (id) ON DELETE CASCADE
         text check_sum
@@ -802,6 +853,7 @@ erDiagram
 
     staff||--|| auth_user_user_metadata:""
     staff||--|| store:""
+    staff||--|| users_type:""
 
     status{
         int id
@@ -827,6 +879,7 @@ erDiagram
         int id
         int poke_item_id
         int poke_product_id
+        int status_id
         int quantity
         %% quantity > 0
         int client_id
@@ -837,6 +890,7 @@ erDiagram
     saved_item ||--|| auth_user_user_metadata:""
     saved_item ||--|| poke_item:""
     saved_item ||--|| poke_product:""
+    saved_item ||--|| status:""
 
     saved_item_adds{
         int id
