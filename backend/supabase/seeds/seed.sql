@@ -69,3 +69,17 @@ INSERT INTO city (state_id, name) VALUES
 (3, 'Alvarado'),
 (3, 'Oreamuno'),
 (3, 'El Guarco');
+
+INSERT INTO users_type (name) VALUES
+('Admin'),
+('Staff'),
+('Client');
+
+INSERT INTO contact_type (name) VALUES
+('Phone'),
+('Email');
+
+INSERT INTO poke_gender (name) VALUES 
+('Male'),
+('Female'),
+('Shiny');
