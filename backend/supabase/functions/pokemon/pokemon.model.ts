@@ -183,3 +183,20 @@ export interface MoveData {
   generation: number;   // INT en SQL se mapea a number en TypeScript
   cost: number;         // INT en SQL se mapea a number en TypeScript
 }
+
+export interface AddPokemonParams {
+  p_id: number;
+  p_name: string;
+  p_hp: number;
+  p_attack: number;
+  p_defense: number;
+  p_special_attack: number;
+  p_special_defense: number;
+  p_speed: number;
+  p_weight: number;
+  p_height: number; 
+  p_types: string[];
+  p_genders: GenderData[];
+  p_moves: MoveData[];
+  p_generations: number[];
+}

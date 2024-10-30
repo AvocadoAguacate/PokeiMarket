@@ -23,59 +23,6 @@ CREATE OR REPLACE FUNCTION add_pokemon(
     p_height INT,
     p_types TEXT[],
     p_genders gender_data[],
-    p_moves move_data[]
-) RETURNS VOID AS $$
-DECLARE
-    new_pokemon_id INTEGER;
-    type_id INTEGER;
-    poke_type_name TEXT;
-    gender_item gender_data;
-    method_id INTEGER;
-    move_id INTEGER;
-BEGIN
-    -- Insertar el Pokémon
-    INSERT INTO pokemon (
-        id, name, hp, attack, defense, special_attack, special_defense, speed, weight, height
-    ) VALUES (
-        p_id, p_name, p_hp, p_attack, p_defense, p_special_attack, 
-        p_special_defense, p_speed, p_weight, p_height
-    )
-    RETURNING id INTO new_pokemon_id;
-    FOREACH poke_type_name IN ARRAY p_types  -- Tipo del Pokémon
-    LOOP
-        SELECT id INTO type_id FROM poke_type WHERE poke_type.name = poke_type_name;
-        IF NOT FOUND THEN
-            INSERT INTO poke_type (name) VALUES (poke_type_name) RETURNING id INTO type_id;  -- Correctamente referenciado
-        END IF;
-        INSERT INTO pokemon_x_type (pokemon_id, type_id) VALUES (new_pokemon_id, type_id);
-    END LOOP;
-    FOREACH gender_item IN ARRAY p_genders
-    LOOP
-        INSERT INTO pokemon_x_gender (pokemon_id, gender_id, url)
-        VALUES (new_pokemon_id, gender_item.poke_gender_id, gender_item.poke_url);
-    END LOOP;
-
-EXCEPTION
-    WHEN OTHERS THEN
-        -- Mostrar un mensaje si hay error
-        RAISE NOTICE 'Error al insertar Pokémon: %', SQLERRM;
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION add_pokemon_transactional(
-    p_id INT,
-    p_name VARCHAR(255),
-    p_hp INT,
-    p_attack INT,
-    p_defense INT,
-    p_special_attack INT,
-    p_special_defense INT,
-    p_speed INT,
-    p_weight INT,
-    p_height NUMERIC,
-    p_types TEXT[],
-    p_genders gender_data[],
     p_moves move_data[],
     p_generations INT[]
 ) RETURNS VOID AS $$

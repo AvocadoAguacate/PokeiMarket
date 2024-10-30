@@ -6,7 +6,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
 import { createClient, SupabaseClient } from 'jsr:@supabase/supabase-js@2'
-import { Pokemon, GenderData, MoveData } from "./pokemon.model.ts"
+import { Pokemon, GenderData, MoveData, AddPokemonParams } from "./pokemon.model.ts"
 import { generations } from '../generations.ts';
 
 const corsHeaders = {
@@ -226,11 +226,32 @@ async function addPokemon(supabaseClient: SupabaseClient, body: any) {
     
     let uniqueGenerations = [...new Set(moves.map(move => move.generation))];
     console.log(uniqueGenerations);
-    return new Response(JSON.stringify(pokedata), {
+
+    const newPokemon: AddPokemonParams = {
+      p_id: pokedata.id,
+      p_name: pokedata.name,
+      p_hp: hp,
+      p_attack: attack,
+      p_defense: defense,
+      p_special_attack: specialAttack,
+      p_special_defense: specialDefense,
+      p_speed: speed,
+      p_weight: pokedata.weight,
+      p_height: pokedata.height,
+      p_types: types,
+      p_genders: genders,
+      p_moves: uniqueMoves,
+      p_generations: uniqueGenerations,
+    };
+
+    const { dataDB, error } = await supabaseClient.rpc('add_pokemon', newPokemon);
+    if(error) console.log(error);
+    return new Response(JSON.stringify(dataDB), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify(error), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
