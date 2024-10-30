@@ -6,7 +6,8 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
 import { createClient, SupabaseClient } from 'jsr:@supabase/supabase-js@2'
-import { Pokemon } from "./pokemon.model.ts"
+import { Pokemon, GenderData, MoveData } from "./pokemon.model.ts"
+import { generations } from '../generations.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -153,9 +154,79 @@ async function addPokemon(supabaseClient: SupabaseClient, body: any) {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${body.id}`);
   const data = await response.json();
   try {
-    const pokeTest:Pokemon = data;
-    console.log(pokeTest.name);
-    return new Response(JSON.stringify(pokeTest), {
+    const pokedata:Pokemon = data;
+    console.log(pokedata.name);
+    let hpStat = pokedata.stats.find(stat => stat.stat.name === 'hp');
+    let hp = hpStat ? hpStat.base_stat : 1;
+    let attackStat = pokedata.stats.find(stat => stat.stat.name === 'attack');
+    let attack = attackStat ? attackStat.base_stat : 0;
+    let defenseStat = pokedata.stats.find(stat => stat.stat.name === 'defense');
+    let defense = defenseStat ? defenseStat.base_stat : 0;
+    let specialAttackStat = pokedata.stats.find(stat => stat.stat.name === 'special-attack');
+    let specialAttack = specialAttackStat ? specialAttackStat.base_stat : 0;
+    let specialDefenseStat = pokedata.stats.find(stat => stat.stat.name === 'special-defense');
+    let specialDefense = specialDefenseStat ? specialDefenseStat.base_stat : 0;
+    let speedStat = pokedata.stats.find(stat => stat.stat.name === 'speed');
+    let speed = speedStat ? speedStat.base_stat : 0;
+    console.log(`HP: ${hp}`);
+    console.log(`Attack: ${attack}`);
+    console.log(`Defense: ${defense}`);
+    console.log(`Special Attack: ${specialAttack}`);
+    console.log(`Special Defense: ${specialDefense}`);
+    console.log(`Speed: ${speed}`);
+    let types = pokedata.types.map(type => type.type.name);
+    console.log(types);
+    let genders:GenderData[] = [];
+    if (pokedata.sprites.other?.home.front_default) {
+      genders.push({
+          poke_gender_id: 1,
+          poke_url: pokedata.sprites.other.home.front_default,
+      });
+    }
+    if (pokedata.sprites.other?.home.front_female) {
+        genders.push({
+            poke_gender_id: 2,
+            poke_url: pokedata.sprites.other.home.front_female,
+        });
+    }
+    if (pokedata.sprites.other?.home.front_shiny) {
+        genders.push({
+            poke_gender_id: 3,
+            poke_url: pokedata.sprites.other.home.front_shiny,
+        });
+    }
+    console.log(genders);
+    let moves: MoveData[] = pokedata.moves.flatMap((move):MoveData[] => {
+      return move.version_group_details.map((details):MoveData => {
+        return {
+          move: move.move.name,
+          method: details.move_learn_method.name,
+          generation: getGenerationByGroupName(details.version_group.name),
+          cost: details.level_learned_at > 0 ? details.level_learned_at : 10
+        }
+      }); 
+    });
+    // Usamos reduce para acumular solo el movimiento con la menor generación
+    let uniqueMoves = moves.reduce((acc, current) => {
+      // Verificamos si ya tenemos este movimiento en el acumulador
+      let existingMove = acc.find(move => move.move === current.move);
+      
+      // Si no existe, lo agregamos
+      if (!existingMove) {
+        acc.push(current);
+      } else if (current.generation < existingMove.generation) {
+        // Si ya existe, verificamos si la generación actual es menor
+        let index = acc.indexOf(existingMove);
+        acc[index] = current; // Reemplazamos con el movimiento actual
+      }
+      
+      return acc;
+    }, []);
+    console.log(uniqueMoves);
+    
+    let uniqueGenerations = [...new Set(moves.map(move => move.generation))];
+    console.log(uniqueGenerations);
+    return new Response(JSON.stringify(pokedata), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
@@ -173,6 +244,16 @@ async function getPokemons(supabaseClient: SupabaseClient, pokemonId: any) {
 
 async function getAllPokemons(supabaseClient: SupabaseClient) {
   throw new Error("Function not implemented.")
+}
+function getGenerationByGroupName(groupName:string):number {
+  for (const generation of generations) {
+    for (const group of generation.groups) {
+      if (group.groupName === groupName) {
+        return Number(generation.generationId);
+      }
+    }
+  }
+  return 1;
 }
 /* To invoke locally:
 

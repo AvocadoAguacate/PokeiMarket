@@ -171,3 +171,15 @@ export interface Type {
   slot: number;
   type: Species;
 }
+
+export interface GenderData {
+  poke_gender_id: number; // INT en SQL se mapea a number en TypeScript
+  poke_url: string;       // TEXT en SQL se mapea a string en TypeScript
+}
+
+export interface MoveData {
+  move: string;         // TEXT en SQL se mapea a string en TypeScript
+  method: string;       // TEXT en SQL se mapea a string en TypeScript
+  generation: number;   // INT en SQL se mapea a number en TypeScript
+  cost: number;         // INT en SQL se mapea a number en TypeScript
+}
