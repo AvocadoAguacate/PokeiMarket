@@ -6,3 +6,4 @@ backend/.vscode
 frontend/.env
 backend/supabase/.env.local
 backend/supabase/.env
+.vscode/settings.json

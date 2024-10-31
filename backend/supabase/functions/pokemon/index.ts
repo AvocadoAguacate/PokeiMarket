@@ -99,14 +99,17 @@ Deno.serve(async (req) => {
     // Patrones para las rutas
     const pokemonPattern = new URLPattern({ pathname: "/pokemon/:id/" });
     const movePattern = new URLPattern({ pathname: "/pokemon/:id/move/:moveId/" });
+    const productPattern = new URLPattern({ pathname: "/pokemon/:id/product/:productId/" });
     const queryPattern = new URLPattern({ pathname: "/pokemon/" });
 
     const pokemonMatch = pokemonPattern.exec(url);
     const moveMatch = movePattern.exec(url);
+    const productMatch = productPattern.exec(url);
     const queryMatch = queryPattern.exec(url);
 
     const pokemonId = pokemonMatch ? pokemonMatch.pathname.groups.id : null;
     const moveId = moveMatch ? moveMatch.pathname.groups.moveId : null;
+    const productId = pokemonMatch ? pokemonMatch.pathname.groups.productId : null;
 
     const { searchParams } = new URL(url);
     const types = searchParams.get("types")?.split(",") ?? [];
@@ -121,6 +124,8 @@ Deno.serve(async (req) => {
 
     // call relevant method based on method and id
     switch (true) {
+      case productId && method === 'PUT':
+        return updatePokemon(supabaseClient, pokemonId);
       case moveId && pokemonId && method === 'PUT':// modificar el precio de un move
         return updateMove(supabaseClient, moveId, pokemonId);
       case pokemonId && method === 'PUT':

@@ -137,3 +137,53 @@ $$ LANGUAGE plpgsql;
 -- SELECT * FROM poke_move;
 -- SELECT * FROM pokemon_x_moves;
 -- SELECT * FROM pokemon_generation;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE OR REPLACE FUNCTION add_product(
+    p_pokemon_id INT,
+    p_gender_id INT,
+    p_generation INT,
+    p_base_cost INT,
+    p_salt TEXT
+) RETURNS VOID AS $$
+DECLARE
+    product_id INTEGER;
+    calculated_check_sum TEXT;
+BEGIN
+    -- Verificar si el Pokémon existe
+    PERFORM id FROM pokemon WHERE id = p_pokemon_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'El Pokémon con ID % no existe.', p_pokemon_id;
+    END IF;
+
+    -- Verificar si el género existe para el Pokémon dado
+    PERFORM id FROM pokemon_x_gender WHERE id = p_gender_id AND pokemon_id = p_pokemon_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'El género con ID % no existe para el Pokémon con ID %.', p_gender_id, p_pokemon_id;
+    END IF;
+
+    -- Generar el check_sum utilizando hmac con sha256, usando la salt y los valores del registro
+    calculated_check_sum := encode(
+        hmac(
+            p_salt::bytea, -- Salt como clave en formato bytea
+            (p_pokemon_id || p_gender_id || p_generation || p_base_cost || p_base_cost)::text::bytea, 
+            'sha256'
+        ),
+        'hex'
+    );
+
+    -- Insertar el producto en la tabla poke_product con el check_sum calculado
+    INSERT INTO poke_product (
+        pokemon_id, gender_id, generation, base_cost, check_sum
+    ) VALUES (
+        p_pokemon_id, p_gender_id, p_generation, p_base_cost, calculated_check_sum
+    )
+    RETURNING id INTO product_id;
+
+    RAISE NOTICE 'Producto insertado correctamente con ID % y check_sum %', product_id, calculated_check_sum;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error al insertar producto: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql;
