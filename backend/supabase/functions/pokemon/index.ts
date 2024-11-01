@@ -97,10 +97,10 @@ Deno.serve(async (req) => {
     )
 
     // Patrones para las rutas
-    const pokemonPattern = new URLPattern({ pathname: "/pokemon/:id/" });
-    const movePattern = new URLPattern({ pathname: "/pokemon/:id/move/:moveId/" });
-    const productPattern = new URLPattern({ pathname: "/pokemon/:id/product/:productId/" });
-    const queryPattern = new URLPattern({ pathname: "/pokemon/" });
+    const pokemonPattern = new URLPattern({ pathname: "/pokemon/:id" });
+    const movePattern = new URLPattern({ pathname: "/pokemon/:id/move/:moveId" });
+    const productPattern = new URLPattern({ pathname: "/pokemon/:id/product/:productId" });
+    const queryPattern = new URLPattern({ pathname: "/pokemon" });
 
     const pokemonMatch = pokemonPattern.exec(url);
     const moveMatch = movePattern.exec(url);

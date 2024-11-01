@@ -94,3 +94,80 @@ EXCEPTION
         RAISE NOTICE 'Error al insertar Pokémon: %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION add_product(
+    p_pokemon_id INT,
+    p_gender_id INT,
+    p_generation INT,
+    p_base_cost INT,
+    p_salt TEXT
+) RETURNS VOID AS $$
+DECLARE
+    product_id INTEGER;
+    calculated_check_sum TEXT;
+BEGIN
+    -- Generar el check_sum utilizando hmac con sha256, usando la salt y los valores del registro
+    calculated_check_sum := encode(
+        hmac(
+            p_salt::bytea,
+            (p_pokemon_id::text  || p_gender_id::text  || p_generation::text  || p_base_cost::text  || p_base_cost::text )::bytea, 
+            'sha256'
+        ),
+        'hex'
+    );
+    -- Insertar el producto en la tabla poke_product con el check_sum calculado
+    INSERT INTO poke_product (
+        pokemon_id, gender_id, generation, base_cost, check_sum
+    ) VALUES (
+        p_pokemon_id, p_gender_id, p_generation, p_base_cost, calculated_check_sum
+    )
+    RETURNING id INTO product_id;
+
+    RAISE NOTICE 'Producto insertado correctamente con ID % y check_sum %', product_id, calculated_check_sum;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error al insertar producto: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION add_pokemon_stock_item(
+    p_poke_product_id INT,
+    p_pc_zone_id INT,
+    p_status_id INT
+) RETURNS VOID AS $$
+DECLARE
+    stock_item_id INTEGER;
+BEGIN
+    -- Insertar el item en pokemon_stock_item
+    INSERT INTO pokemon_stock_item (
+        poke_product_id, pc_zone_id, status_id
+    ) VALUES (
+        p_poke_product_id, p_pc_zone_id, p_status_id
+    )
+    RETURNING id INTO stock_item_id;
+
+    RAISE NOTICE 'Item de stock insertado correctamente con ID %', stock_item_id;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error al insertar item de stock: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- TODO delete
+CREATE OR REPLACE FUNCTION get_pokemon_data()
+RETURNS TABLE(pokemon_id INT, gender_id INT, generation INT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        pxg.pokemon_id,
+        pxg.gender_id,
+        pg.generation
+    FROM 
+        pokemon_x_gender pxg
+    INNER JOIN 
+        pokemon_generation pg ON pxg.pokemon_id = pg.pokemon_id;
+END;
+$$ LANGUAGE plpgsql;

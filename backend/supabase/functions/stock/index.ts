@@ -6,7 +6,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
 import { createClient, SupabaseClient } from 'jsr:@supabase/supabase-js@2'
-import { PokemonProduct } from "./stock.model.ts"
+import { PokemonProduct, PokemonStockItemParams } from "./stock.model.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,17 +42,33 @@ Deno.serve(async (req) => {
     )
 
     // Patrones para las rutas
-    const pokemonPattern = new URLPattern({ pathname: "/stock/pokemon/:pokemonId/" });
-    const productPattern = new URLPattern({ pathname: "stock/product/:productId/" });
-    const itemPattern = new URLPattern({ pathname: "/stock/item/:itemId/"});
+    console.log(`Url: ${url}`)//http://supabase_edge_runtime_backend:8081/stock/product
+    const pokemonPatternId = new URLPattern({ pathname: "/stock/pokemon/:pokemonId" });
+    const productPatternId = new URLPattern({ pathname: "stock/product/:productId" });
+    const itemPatternId = new URLPattern({ pathname: "/stock/item/:itemId"});
+
+    const pokemonPattern = new URLPattern({ pathname: "/stock/pokemon" });
+    const productPattern = new URLPattern({ pathname: "/stock/product" });
+    const itemPattern = new URLPattern({ pathname: "/stock/item"});
+
+    const pokemonMatchId = pokemonPatternId.exec(url);
+    const productMatchId = productPatternId.exec(url);
+    const itemMatchId = itemPatternId.exec(url);
 
     const pokemonMatch = pokemonPattern.exec(url);
     const productMatch = productPattern.exec(url);
     const itemMatch = itemPattern.exec(url);
 
-    const pokemonId = pokemonMatch ? pokemonMatch.pathname.groups.id : null;
-    const productId = productMatch ? productMatch.pathname.groups.moveId : null;
-    const itemId = itemMatch ? itemMatch.pathname.groups.productId : null;
+    const pokemonId = pokemonMatchId ? pokemonMatchId.pathname.groups.id : null;
+    const productId = productMatchId ? productMatchId.pathname.groups.moveId : null;
+    const itemId = itemMatchId ? itemMatchId.pathname.groups.productId : null;
+    // Mostrar los resultados de los matches
+    console.log('pokemonMatchId:', pokemonMatchId);
+    console.log('productMatchId:', productMatchId);
+    console.log('itemMatchId:', itemMatchId);
+    console.log('pokemonMatch:', pokemonMatch);
+    console.log('productMatch:', productMatch);
+    console.log('itemMatch:', itemMatch);
 
     let body = null
     if (method === 'POST' || method === 'PUT') {
@@ -62,11 +78,15 @@ Deno.serve(async (req) => {
     // call relevant method based on method and id
     switch (true) {
       case productMatch && method === 'POST':
+        console.log('Por aquí');
         return addProduct(supabaseClient, body);
-      case productId && pokemonId && method === 'PUT':
+      case productId && method === 'PUT':
         return updateProduct(supabaseClient, pokemonId, body);
+      case pokemonMatch && method === 'POST':
+        return addStock(supabaseClient, body);
       //TODO: get of produt and get, post y put de stock de pokemon y item
       default:
+        console.log('default');
         return addProduct(supabaseClient, body);
     }
   } catch (error) {
@@ -85,7 +105,7 @@ async function updateProduct(supabaseClient: any, pokemonId: any, body: any) {
 
 async function addProduct(supabaseClient: any, body: any) {
   console.log(body);
-  console.log(Deno.env.get('SALT'))
+  const salt = Deno.env.get('SALT');
   const newProduct: PokemonProduct = {
     p_pokemon_id: body.pokemon_id,
     p_gender_id: body.gender_id,
@@ -102,6 +122,24 @@ async function addProduct(supabaseClient: any, body: any) {
     status: 200,
   })
 }
+
+async function addStock(supabaseClient: any, body: any) {
+  console.log(body);
+  const salt = Deno.env.get('SALT');
+  const newStock: PokemonStockItemParams = {
+    p_poke_product_id: body.poke_product_id,
+    p_pc_zone_id: body.store_id,
+    p_status_id: body.status_id
+  }
+  const { dataDB, error } = await supabaseClient.rpc('add_pokemon_stock_item', newStock);
+  if(error) console.log(error);
+  if(dataDB) console.log(dataDB);
+  return new Response(JSON.stringify(dataDB), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    status: 200,
+  })
+}
+addStock
 /* To invoke locally:
 
   1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
