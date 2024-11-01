@@ -150,28 +150,15 @@ DECLARE
     product_id INTEGER;
     calculated_check_sum TEXT;
 BEGIN
-    -- Verificar si el Pokémon existe
-    PERFORM id FROM pokemon WHERE id = p_pokemon_id;
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'El Pokémon con ID % no existe.', p_pokemon_id;
-    END IF;
-
-    -- Verificar si el género existe para el Pokémon dado
-    PERFORM id FROM pokemon_x_gender WHERE id = p_gender_id AND pokemon_id = p_pokemon_id;
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'El género con ID % no existe para el Pokémon con ID %.', p_gender_id, p_pokemon_id;
-    END IF;
-
     -- Generar el check_sum utilizando hmac con sha256, usando la salt y los valores del registro
     calculated_check_sum := encode(
         hmac(
-            p_salt::bytea, -- Salt como clave en formato bytea
-            (p_pokemon_id || p_gender_id || p_generation || p_base_cost || p_base_cost)::text::bytea, 
+            p_salt::bytea,
+            (p_pokemon_id::text  || p_gender_id::text  || p_generation::text  || p_base_cost::text  || p_base_cost::text )::bytea, 
             'sha256'
         ),
         'hex'
     );
-
     -- Insertar el producto en la tabla poke_product con el check_sum calculado
     INSERT INTO poke_product (
         pokemon_id, gender_id, generation, base_cost, check_sum
@@ -185,5 +172,47 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         RAISE NOTICE 'Error al insertar producto: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION add_pokemon_stock_item(
+    p_poke_product_id INT,
+    p_pc_zone_id INT,
+    p_status_id INT
+) RETURNS VOID AS $$
+DECLARE
+    stock_item_id INTEGER;
+BEGIN
+    -- Verificar si el producto existe en poke_product
+    PERFORM id FROM poke_product WHERE id = p_poke_product_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'El producto con ID % no existe.', p_poke_product_id;
+    END IF;
+
+    -- Verificar si la zona existe en la tabla store
+    PERFORM id FROM store WHERE id = p_pc_zone_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'La zona de PC con ID % no existe.', p_pc_zone_id;
+    END IF;
+
+    -- Verificar si el estado existe en la tabla status
+    PERFORM id FROM status WHERE id = p_status_id;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'El estado con ID % no existe.', p_status_id;
+    END IF;
+
+    -- Insertar el item en pokemon_stock_item
+    INSERT INTO pokemon_stock_item (
+        poke_product_id, pc_zone_id, status_id
+    ) VALUES (
+        p_poke_product_id, p_pc_zone_id, p_status_id
+    )
+    RETURNING id INTO stock_item_id;
+
+    RAISE NOTICE 'Item de stock insertado correctamente con ID %', stock_item_id;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error al insertar item de stock: %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
