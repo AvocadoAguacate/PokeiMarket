@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
       //TODO: get of produt and get, post y put de stock de pokemon y item
       default:
         console.log('default');
-        return addProduct(supabaseClient, body);
+        return addStock(supabaseClient, body);
     }
   } catch (error) {
     console.error(error)
@@ -125,7 +125,6 @@ async function addProduct(supabaseClient: any, body: any) {
 
 async function addStock(supabaseClient: any, body: any) {
   console.log(body);
-  const salt = Deno.env.get('SALT');
   const newStock: PokemonStockItemParams = {
     p_poke_product_id: body.poke_product_id,
     p_pc_zone_id: body.store_id,
@@ -139,7 +138,6 @@ async function addStock(supabaseClient: any, body: any) {
     status: 200,
   })
 }
-addStock
 /* To invoke locally:
 
   1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)

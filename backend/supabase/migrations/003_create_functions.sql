@@ -171,3 +171,22 @@ BEGIN
         pokemon_generation pg ON pxg.pokemon_id = pg.pokemon_id;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS get_pokemon_data();
+
+
+CREATE OR REPLACE FUNCTION get_pokemon_data()
+RETURNS TABLE(id INT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        pxg.id
+    FROM 
+        poke_product pxg
+    WHERE 
+        pxg.id < 600;
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM get_pokemon_data();
