@@ -15,7 +15,7 @@ http://127.0.0.1:54321/functions/v1/pokemon/{id}/move/{id}
 ## Product
 
 ````
-http://127.0.0.1:54321/functions/v1/pokemon/{id}/product/{id}
+http://127.0.0.1:54321/functions/v1/stock/product/{productId}
 ````
 
 ## Stock
