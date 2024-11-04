@@ -127,7 +127,7 @@ async function addStock(supabaseClient: any, body: any) {
   console.log(body);
   const newStock: PokemonStockItemParams = {
     p_poke_product_id: body.poke_product_id,
-    p_pc_zone_id: body.store_id,
+    p_pc_zone_id: body.pc_zone_id,
     p_status_id: body.status_id
   }
   const { dataDB, error } = await supabaseClient.rpc('add_pokemon_stock_item', newStock);
