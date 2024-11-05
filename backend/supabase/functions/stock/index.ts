@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     // Patrones para las rutas
     console.log(`Url: ${url}`)//http://supabase_edge_runtime_backend:8081/stock/product
     const pokemonPatternId = new URLPattern({ pathname: "/stock/pokemon/:pokemonId" });
-    const productPatternId = new URLPattern({ pathname: "stock/product/:productId" });
+    const productPatternId = new URLPattern({ pathname: "/stock/product/:productId" });
     const itemPatternId = new URLPattern({ pathname: "/stock/item/:itemId"});
 
     const pokemonPattern = new URLPattern({ pathname: "/stock/pokemon" });
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
     if (method === 'POST' || method === 'PUT') {
       body = await req.json()
     }
-
+    
     // call relevant method based on method and id
     switch (true) {
       case productMatch && method === 'POST':
