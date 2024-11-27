@@ -1,3 +1,17 @@
+import { ListMethodComponent } from './user/pages/list-method/list-method.component';
+import { ListOrderComponent } from './user/pages/list-order/list-order.component';
+import { ListDirectionComponent } from './user/pages/list-direction/list-direction.component';
+import { UserHomeComponent } from './user/pages/user-home/user-home.component';
+import { ResumeComponent } from './buy/pages/resume/resume.component';
+import { MethodComponent } from './buy/pages/method/method.component';
+import { DirectionComponent } from './buy/pages/direction/direction.component';
+import { StockComponent } from './staff/pages/stock/stock.component';
+import { StaffHomeComponent } from './staff/pages/staff-home/staff-home.component';
+import { AdminItemsComponent } from './admin/pages/admin-items/admin-items.component';
+import { AdminPokemonsComponent } from './admin/pages/admin-pokemons/admin-pokemons.component';
+import { AdminStaffComponent } from './admin/pages/admin-staff/admin-staff.component';
+import { AdminClientsComponent } from './admin/pages/admin-clients/admin-clients.component';
+import { AdminHomeComponent } from './admin/pages/admin-home/admin-home.component';
 import { Error404PageComponent } from './shared/pages/error404-page/error404-page.component';
 import { UserLayoutComponent } from './user/pages/user-layout/user-layout.component';
 import { CartLayoutComponent } from './cart/pages/cart-layout/cart-layout.component';
@@ -37,9 +51,11 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
-      //TODO crear administrar staff, administrar clientes, administrar pokemons, administrar items
-      //TODO eliminar lo siguiente
-      {path: 'home', component: StoreListComponent},
+      {path: 'home', component: AdminHomeComponent},
+      {path: 'clients', component: AdminClientsComponent},
+      {path: 'staff', component: AdminStaffComponent},
+      {path: 'pokemons', component: AdminPokemonsComponent},
+      {path: 'items', component: AdminItemsComponent},
       {path: '**', redirectTo: 'home'}
     ]
   },
@@ -47,9 +63,8 @@ export const routes: Routes = [
     path: 'staff',
     component: StaffLayoutComponent,
     children: [
-      //TODO lista de pendientes, administrar stock
-      //TODO eliminar lo siguiente
-      {path: 'home', component: StoreListComponent},
+      {path: 'home', component: StaffHomeComponent},
+      {path: 'stock', component: StockComponent},
       {path: '**', redirectTo: 'home'}
     ]
   },
@@ -57,10 +72,10 @@ export const routes: Routes = [
     path: 'buy',
     component: BuyLayoutComponent,
     children: [
-      //TODO escoger forma de envio y dirección, escoger forma de pago, confirmar compra
-      //TODO eliminar lo siguiente
-      {path: 'home', component: StoreListComponent},
-      {path: '**', redirectTo: 'home'}
+      {path: 'direction', component: DirectionComponent},
+      {path: 'method', component: MethodComponent},
+      {path: 'resume', component: ResumeComponent},
+      {path: '**', redirectTo: 'direction'}
     ]
   },
   {
@@ -71,9 +86,10 @@ export const routes: Routes = [
     path: 'user',
     component: UserLayoutComponent,
     children: [
-      //TODO home de usuario (lista de direcciones, pagos y ordenes), editar dirección, editar forma de pago
-      //TODO eliminar lo siguiente
-      {path: 'home', component: StoreListComponent},
+      {path: 'home', component: UserHomeComponent},
+      {path: 'direction', component: ListDirectionComponent},
+      {path: 'order', component: ListOrderComponent},
+      {path: 'method', component: ListMethodComponent},
       {path: '**', redirectTo: 'home'}
     ]
   },
