@@ -1,1 +1,19 @@
-<p>nav-bar works!</p>
+<mat-toolbar>
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>radio_button_unchecked</mat-icon>
+  </button>
+  <span>Poke i Market</span>
+  <ng-content select="[leftOptions]"></ng-content>
+  <!-- <button mat-button class="example-icon" aria-label="Example icon-button with share icon">
+    Tatuajes
+  </button> -->
+  <span class="example-spacer"></span>
+  <ng-content select="[rightOptions]"></ng-content>
+  <!-- <button mat-button class="example-icon" aria-label="Example icon-button with share icon">
+    Tatuajes
+  </button> -->
+  <button mat-icon-button class="example-icon favorite-icon" aria-label="logout icon">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+

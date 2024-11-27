@@ -1,1 +1,35 @@
-<p>store-nav-bar works!</p>
+<app-nav-bar>
+  <div leftOptions>
+    <button mat-button [matMenuTriggerFor]="generationsMenu" class="menu-trigger">
+      Generations
+    </button>
+    <button mat-button [matMenuTriggerFor]="itemsMenu" class="menu-trigger">
+      Items
+    </button>
+    <mat-form-field class="example-full-width">
+      <mat-label>Search</mat-label>
+      <input matInput placeholder="Ex. Pika">
+    </mat-form-field>
+  </div>
+  <div rightOptions>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="logout icon">
+      <mat-icon>shopping_cart</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="logout icon">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </div>
+</app-nav-bar>
+<mat-menu #generationsMenu="matMenu">
+  <button mat-menu-item>Generación 1</button>
+  <button mat-menu-item>Generación 2</button>
+  <button mat-menu-item>Generación 3</button>
+  <button mat-menu-item>Generación 4</button>
+  <button mat-menu-item>Generación 5</button>
+  <button mat-menu-item>Generación 6</button>
+</mat-menu>
+<mat-menu #itemsMenu="matMenu">
+  <button mat-menu-item>Pokeballs</button>
+  <button mat-menu-item>Heals</button>
+  <button mat-menu-item>More</button>
+</mat-menu>
