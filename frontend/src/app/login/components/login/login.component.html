@@ -1,1 +1,13 @@
-<p>login works!</p>
+<div>
+  <form [formGroup]="LoginForm">
+    <mat-form-field class="">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" required formControlName="email" />
+    </mat-form-field>
+
+  <mat-form-field class="">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" required formControlName="password" />
+  </mat-form-field>
+  </form>
+</div>
