@@ -1,1 +1,12 @@
-<p>store-list works!</p>
+<div class="listContainer">
+  <div class="filterList">
+    <p>porque ?</p>
+  </div>
+  <div class="list">
+    @for (pokemon of pokemons; track $index) {
+        <div class="">
+            <app-store-item [pokemon]="pokemon"></app-store-item>
+        </div>
+    }
+</div>
+</div>

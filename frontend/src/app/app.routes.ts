@@ -43,7 +43,7 @@ export const routes: Routes = [
     component: StoreLayoutComponent,
     children: [
       {path: 'list', component: StoreListComponent},
-      {path: 'item', component: StoreDetailComponent},
+      {path: 'item/:id/:generation', component: StoreDetailComponent},
       {path: '**', redirectTo: 'list'}
     ]
   },

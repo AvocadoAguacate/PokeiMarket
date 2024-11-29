@@ -1,0 +1,21 @@
+/* Asegura que el body y html ocupen toda la altura de la ventana */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Contenedor principal, asegurando que ocupe toda la altura */
+.app-container {
+  height: 100%;
+}
+
+/* El navbar no debe afectar el tamaño del router-outlet */
+app-store-nav-bar {
+  flex-shrink: 0;  /* Para evitar que el navbar se reduzca de tamaño */
+}
+
+/* El contenido dentro del router-outlet debe ocupar el resto del espacio */
+router-outlet {
+  flex-grow: 1;
+  overflow: auto; /* En caso de que el contenido se desborde */
+}
