@@ -139,7 +139,7 @@ Deno.serve(async (req) => {
       case !pokemonId && method === 'POST':
         return addPokemon(supabaseClient, body);
       case pokemonId && method === 'GET':
-        return getPokemons(supabaseClient, pokemonId)
+        return getPokemons(supabaseClient, pokemonId, generation)
       default:
         return getAllPokemons(supabaseClient, types, generation, minPrice, maxPrice);
     }
@@ -270,8 +270,29 @@ async function addPokemon(supabaseClient: SupabaseClient, body: any) {
   }
 }
 
-async function getPokemons(supabaseClient: SupabaseClient, pokemonId: any) {
-  throw new Error("Function not implemented.")
+async function getPokemons(supabaseClient: SupabaseClient, pokemonId: number, generation: number) {
+  try {
+    console.log('pokemonId:', pokemonId);
+    console.log('Generation:', generation);
+    const { data, error } = await supabaseClient
+      .rpc("get_pokemon", {
+        poke_id: pokemonId,
+        generation_param: generation,
+        limit_param: 10,
+        offset_param: 0,
+      });
+      if(error) console.log(error);
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    } catch (error) {
+      console.log(error);
+      return new Response(JSON.stringify(error), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
 }
 
 async function getAllPokemons(

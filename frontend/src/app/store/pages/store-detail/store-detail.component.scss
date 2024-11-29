@@ -1,0 +1,35 @@
+.detail-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.img-container {
+  flex: 0 0 50%; /* Hace que la imagen ocupe el 50% del ancho */
+  max-width: 50%; /* Límite máximo al 50% */
+  padding-right: 20px; /* Espacio entre la imagen y los detalles */
+}
+
+.img-container img {
+  width: 100%;
+  height: auto;
+}
+
+.details {
+  flex: 1; /* El resto del espacio será ocupado por los detalles */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente */
+}
+
+mat-card {
+  padding: 20px;
+  width: fit-content;
+}
+
+mat-card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* Añade espacio entre el input y el botón */
+}

@@ -1,1 +1,37 @@
-<p>store-detail works!</p>
+<div class="detail-container">
+  <div class="img-container">
+    <img [src]="pokemon[currentIndex].img" alt="Imagen dinámica" title="Imagen dinámica">
+  </div>
+  <div class="details">
+      <mat-card>
+        <mat-card-header>
+            <mat-card-subtitle> {{ pokemon[0].name }}</mat-card-subtitle>
+            <mat-card-subtitle> Generation:{{ pokemon[0].generation }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-card-subtitle> Attack: {{ pokemon[0].attack }}</mat-card-subtitle>
+        <mat-card-subtitle> Defense: {{ pokemon[0].defense }}</mat-card-subtitle>
+        <mat-card-subtitle> HP: {{ pokemon[0].hp }}</mat-card-subtitle>
+        <mat-card-subtitle> Special Attack: {{ pokemon[0].special_attack }}</mat-card-subtitle>
+        <mat-card-subtitle> Special Defense: {{ pokemon[0].special_defense }}</mat-card-subtitle>
+        <mat-card-subtitle> Speed: {{ pokemon[0].speed }}</mat-card-subtitle>
+        <mat-card-subtitle> Weight: {{ pokemon[0].weight }}</mat-card-subtitle>
+        <mat-card-subtitle> Height: {{ pokemon[0].height }}</mat-card-subtitle>
+        <mat-card-subtitle> Type: {{ pokemon[0].types }}</mat-card-subtitle>
+        <mat-card-actions>
+          <mat-form-field>
+            <mat-label>Type</mat-label>
+            <mat-select (selectionChange)="updateFilter2('types', $event.value)" > 
+              <mat-option *ngFor="let type of pokemon; let i = index" [value]="i">
+                {{ type.gender_name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-flat-button color="primary" (click)="onSubmit()">
+            Buy {{pokemon[currentIndex].base_cost}}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+  </div>
+</div>
