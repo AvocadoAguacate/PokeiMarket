@@ -1,3 +1,4 @@
+import { environment } from './../../../environments/environment';
 // import { AuthResponse } from './../../../../node_modules/@supabase/auth-js/src/lib/types';
 import { Injectable } from '@angular/core';
 import { createClient, Session, AuthResponse } from '@supabase/supabase-js';
@@ -5,8 +6,8 @@ import { createClient, Session, AuthResponse } from '@supabase/supabase-js';
   providedIn: 'root'
 })
 export class AuthService {
-  private supabaseUrl = 'https://qyvywlkgdtxpigincthb.supabase.co';
-  private supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5dnl3bGtnZHR4cGlnaW5jdGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkyOTg2MjYsImV4cCI6MjA0NDg3NDYyNn0.gYIk2YWB2TfPo91cdcYaTARj81hxEDYR0MNvxxnopiQ';
+  private supabaseUrl = environment.supabaseUrl;
+  private supabaseKey = environment.supabaseKey;
   private supabase = createClient(this.supabaseUrl, this.supabaseKey);
   constructor() {
     this.initializeAuthListener();

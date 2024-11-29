@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -7,7 +8,7 @@ import { AuthService } from './../shared/services/auth.service';
   providedIn: 'root'
 })
 export class MystoreService {
-  private url: string = "https://qyvywlkgdtxpigincthb.supabase.co/functions/v1/pokemon/"
+  private url: string = environment.storeUrl;
 
   private pokemonsSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   public pokemons$: Observable<any[]> = this.pokemonsSubject.asObservable();
