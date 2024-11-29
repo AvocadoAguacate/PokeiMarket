@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Component } from '@angular/core';
@@ -24,5 +25,10 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './store-nav-bar.component.scss'
 })
 export class StoreNavBarComponent {
-
+  constructor(
+    private router:Router
+  ){}
+  onCart(){
+    this.router.navigate(['/cart'])
+  }
 }

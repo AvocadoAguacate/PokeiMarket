@@ -220,3 +220,71 @@ BEGIN
   OFFSET offset_param;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_pokemon(
+    poke_id INT,
+    generation_param INT,
+    limit_param INT,
+    offset_param INT
+)
+RETURNS TABLE(
+    id INT, 
+    name TEXT, 
+    hp INT, 
+    attack INT, 
+    defense INT,
+    special_attack INT, 
+    special_defense INT, 
+    speed INT,
+    weight INT,
+    height INT,
+    gender_name TEXT,
+    img TEXT,
+    base_cost INT,
+    generation INT,
+    types TEXT
+) AS
+$$
+BEGIN
+  RETURN QUERY
+  SELECT
+      pokemon.id AS id, 
+      pokemon.name::TEXT AS name,
+      pokemon.hp AS hp,
+      pokemon.attack AS attack,
+      pokemon.defense AS defense,
+      pokemon.special_attack AS special_attack,
+      pokemon.special_defense AS special_defense,
+      pokemon.speed AS speed,
+      pokemon.weight AS weight,
+      pokemon.height AS height,
+      poke_gender.name::TEXT AS gender_name,
+      pokemon_x_gender.url::TEXT AS img,
+      poke_product.base_cost AS base_cost,
+      poke_product.generation AS generation,
+      string_agg(DISTINCT poke_type.name::TEXT, ', ') AS types  -- Concatenamos los tipos en una sola columna
+  FROM poke_product
+  INNER JOIN pokemon
+      ON pokemon.id = poke_product.pokemon_id
+  INNER JOIN pokemon_x_gender
+      ON pokemon_x_gender.pokemon_id = pokemon.id
+  INNER JOIN pokemon_x_type
+      ON pokemon_x_type.pokemon_id = pokemon.id
+  INNER JOIN poke_type
+      ON poke_type.id = pokemon_x_type.type_id
+  INNER JOIN poke_gender
+      ON poke_product.gender_id = poke_gender.id
+  WHERE 
+      pokemon.id = poke_id  -- Filtramos por el ID del Pokémon específico
+  AND poke_product.generation = generation_param
+  GROUP BY 
+      pokemon.id, 
+      pokemon.name, 
+      poke_product.base_cost, 
+      pokemon_x_gender.url, 
+      poke_product.generation,
+      poke_gender.name
+  LIMIT limit_param
+  OFFSET offset_param;
+END;
+$$ LANGUAGE plpgsql;

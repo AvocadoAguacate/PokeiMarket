@@ -1,7 +1,8 @@
+import { CartService } from './../../../cart/services/cart.service';
 import { PokemonDetail } from './../../pokemon.model';
 import { MystoreService } from './../../mystore.service';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +13,6 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { CommonModule } from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSelectModule} from '@angular/material/select';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-store-detail',
@@ -33,7 +33,15 @@ import { Router } from '@angular/router';
 })
 export class StoreDetailComponent {
 onSubmit() {
-throw new Error('Method not implemented.');
+  this.cartService.addItem({
+    id: this.pokemon[0].id,
+    gender: this.pokemon[this.currentIndex].gender_name,
+    generation: this.pokemon[0].generation,
+    quantity: 1,
+    name: this.pokemon[0].name,
+    cost: this.pokemon[this.currentIndex].base_cost
+  });
+  this.router.navigate(['/cart'])
 }
   id: string | null = null;
   generation: string | null = null;
@@ -41,7 +49,9 @@ throw new Error('Method not implemented.');
   currentIndex: number = 0;
   constructor(
     private route: ActivatedRoute,
-    private storeService: MystoreService
+    private storeService: MystoreService,
+    private cartService: CartService,
+    private router:Router
   ) {
     
   }

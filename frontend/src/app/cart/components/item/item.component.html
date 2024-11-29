@@ -1,1 +1,18 @@
-<p>item works!</p>
+<mat-card>
+  <mat-card-header>
+      <mat-card-subtitle> {{ item.name }} - I{{item.id}} - G{{item.generation}} - {{item.gender}}: {{item.quantity}} ${{item.cost}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-actions>
+      <button mat-raised-button  color="primary" (click)="onDecrease()">
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button mat-raised-button  color="primary" (click)="onIncrease()">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button mat-raised-button  color="primary" (click)="onDelete()">
+        <mat-icon>close</mat-icon>
+      </button>
+  </mat-card-actions>
+
+  
+</mat-card>
