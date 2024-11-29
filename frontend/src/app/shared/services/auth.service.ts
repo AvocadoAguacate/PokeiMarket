@@ -31,19 +31,25 @@ export class AuthService {
     });
   }
 
-  async register(email: string, password: string):Promise<AuthResponse>{
+  async register(email: string, password: string, name: string):Promise<AuthResponse>{
     return this.supabase.auth.signUp({
       email,
       password,
       options:{
         data: {
-          role: 'client'
+          role: 'client',
+          name: name
         }
       }
     });
   }
+
+  async signOutUser(){
+    return this.supabase.auth.signOut();
+  }
+
   // Escuchar eventos de autenticación
-  initializeAuthListener(): void {
+  initializeAuthListener():void {
     this.supabase.auth.onAuthStateChange((event, session) => {
       console.log('Evento de autenticación:', event);
       if (event === 'SIGNED_IN') {
