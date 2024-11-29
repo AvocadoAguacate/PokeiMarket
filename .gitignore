@@ -8,3 +8,7 @@ backend/supabase/.env.local
 backend/supabase/.env
 .vscode/settings.json
 backend/supabase/functions/filler/index.ts
+public/*
+.firebaserc
+firebase.json
+.firebase/hosting.cHVibGlj.cache
