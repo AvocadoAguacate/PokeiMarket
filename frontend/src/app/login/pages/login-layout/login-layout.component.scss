@@ -1,0 +1,8 @@
+@use '@angular/material' as mat;
+.loginContainer {
+  background-color: #161b1b;
+  height: 100vh; // Altura total visible sin scroll
+  display: flex; // Opcional, para centrar contenido
+  justify-content: center; // Centrado horizontal
+  align-items: center; // Centrado vertical
+}

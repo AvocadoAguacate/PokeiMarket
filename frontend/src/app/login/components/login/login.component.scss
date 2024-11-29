@@ -1,0 +1,21 @@
+// Contenedor del formulario
+.form-container {
+  display: flex;
+  flex-direction: column; // Ordena los elementos en una columna
+  gap: 1.5rem; // Espaciado entre los campos
+  width: 100%; // Ocupa todo el ancho disponible
+  max-width: 800px; // Ancho máximo del formulario
+  margin: 2rem auto; // Centra el formulario en la pantalla
+}
+
+// Campo de formulario
+.form-field {
+  width: 100%; // Asegura que los campos ocupen el ancho completo
+}
+
+// Botón de envío
+.btn-submit {
+  align-self: center; // Centra el botón en el contenedor
+  width: 100%; // Opcional: Hazlo ocupar todo el ancho si quieres
+  max-width: 200px; // Limita el tamaño máximo del botón
+}
