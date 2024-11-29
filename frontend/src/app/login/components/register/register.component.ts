@@ -60,6 +60,7 @@ export class RegisterComponent {
         this.RegisterForm.reset();
       } else {
         console.log(data);
+        this.router.navigate(['/store']);
       }
     }).catch((err) => { //no logra conectarse al backend
       console.log(err);

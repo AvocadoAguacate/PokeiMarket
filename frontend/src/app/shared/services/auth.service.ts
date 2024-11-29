@@ -5,8 +5,8 @@ import { createClient, Session, AuthResponse } from '@supabase/supabase-js';
   providedIn: 'root'
 })
 export class AuthService {
-  private supabaseUrl = 'http://127.0.0.1:54321';
-  private supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+  private supabaseUrl = 'https://qyvywlkgdtxpigincthb.supabase.co';
+  private supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF5dnl3bGtnZHR4cGlnaW5jdGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkyOTg2MjYsImV4cCI6MjA0NDg3NDYyNn0.gYIk2YWB2TfPo91cdcYaTARj81hxEDYR0MNvxxnopiQ';
   private supabase = createClient(this.supabaseUrl, this.supabaseKey);
   constructor() {
     this.initializeAuthListener();

@@ -7,7 +7,7 @@ import { AuthService } from './../shared/services/auth.service';
   providedIn: 'root'
 })
 export class MystoreService {
-  private url: string = "http://127.0.0.1:54321/functions/v1/pokemon/"
+  private url: string = "https://qyvywlkgdtxpigincthb.supabase.co/functions/v1/pokemon/"
 
   private pokemonsSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   public pokemons$: Observable<any[]> = this.pokemonsSubject.asObservable();
