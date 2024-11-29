@@ -189,4 +189,34 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-SELECT * FROM get_pokemon_data();
+CREATE OR REPLACE FUNCTION get_pokemons(poke_type_name TEXT, generation_param INT, min_price INT, max_price INT, limit_param INT, offset_param INT)
+RETURNS TABLE(id INT, name TEXT, baseCost INT, img TEXT, generation INT) AS
+$$
+BEGIN
+  RETURN QUERY
+  SELECT DISTINCT ON (pokemon_generation.id)  
+        pokemon.id as id, 
+        pokemon.name::TEXT as name,
+        poke_product.base_cost as baseCost,
+        pokemon_x_gender.url::TEXT as img,
+        pokemon_generation.generation as generation
+  FROM pokemon
+  INNER JOIN poke_product
+    ON poke_product.pokemon_id = pokemon.id
+  INNER JOIN pokemon_x_gender
+    ON pokemon_x_gender.pokemon_id = pokemon.id 
+  INNER JOIN pokemon_generation
+    ON pokemon_generation.pokemon_id = pokemon.id
+  INNER JOIN pokemon_x_type
+    ON pokemon_x_type.pokemon_id = pokemon.id
+  INNER JOIN poke_type
+    ON poke_type.id = pokemon_x_type.type_id
+  WHERE 
+      (poke_type_name IS NULL OR poke_type.name = poke_type_name)
+    AND (generation_param IS NULL OR pokemon_generation.generation = generation_param)
+    AND (min_price IS NULL OR poke_product.base_cost >= min_price)
+    AND (max_price IS NULL OR poke_product.base_cost <= max_price)
+  LIMIT limit_param
+  OFFSET offset_param;
+END;
+$$ LANGUAGE plpgsql;

@@ -17,7 +17,7 @@ npx supabase stop
 ### Edge Functions
 #### Hot-reloading 
 ```bash
-supabase functions serve --env-file ./supabase/.env.local
+npx supabase functions serve --env-file ./supabase/.env.local
 ```
 #### Create a newone
 ```bash

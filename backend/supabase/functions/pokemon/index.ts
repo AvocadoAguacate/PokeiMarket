@@ -112,9 +112,15 @@ Deno.serve(async (req) => {
     const productId = pokemonMatch ? pokemonMatch.pathname.groups.productId : null;
 
     const { searchParams } = new URL(url);
-    const types = searchParams.get("types")?.split(",") ?? [];
+    const types = searchParams.get("types")?.split(",") ?? null;
     const generation = searchParams.get("generation")
       ? parseInt(searchParams.get("generation")!, 10)
+      : null;
+    const minPrice = searchParams.get("minPrice")
+      ? parseInt(searchParams.get("minPrice")!)
+      : null;
+    const maxPrice = searchParams.get("maxPrice")
+      ? parseInt(searchParams.get("maxPrice")!)
       : null;
 
     let body = null
@@ -135,7 +141,7 @@ Deno.serve(async (req) => {
       case pokemonId && method === 'GET':
         return getPokemons(supabaseClient, pokemonId)
       default:
-        return getAllPokemons(supabaseClient)
+        return getAllPokemons(supabaseClient, types, generation, minPrice, maxPrice);
     }
   } catch (error) {
     console.error(error)
@@ -268,9 +274,52 @@ async function getPokemons(supabaseClient: SupabaseClient, pokemonId: any) {
   throw new Error("Function not implemented.")
 }
 
-async function getAllPokemons(supabaseClient: SupabaseClient) {
-  throw new Error("Function not implemented.")
+async function getAllPokemons(
+  supabaseClient: SupabaseClient, 
+  types: string[] | null, 
+  generation: number | null,
+  minPrice: number | null,
+  maxPrice: number | null
+) {
+  const type = types ? types[0] : null;
+  const defaultLimit = 10;
+  const defaultOffset = 0;
+  try {
+    const pokeTypeName = type;
+    const gen = generation;
+    const min_price = minPrice;
+    const max_price = maxPrice;
+    const limitParam = defaultLimit;
+    const offsetParam = defaultOffset;
+    console.log('Poke Type Name:', pokeTypeName);
+    console.log('Generation:', gen);
+    console.log('Min Price:', min_price);
+    console.log('Max Price:', max_price);
+    console.log('Limit:', limitParam);
+    console.log('Offset:', offsetParam);
+    const { data, error } = await supabaseClient
+      .rpc("get_pokemons", {
+        poke_type_name: pokeTypeName,
+        generation_param: gen,
+        min_price: min_price,
+        max_price: max_price,
+        limit_param: limitParam,
+        offset_param: offsetParam,
+      });
+      if(error) console.log(error);
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    } catch (error) {
+      console.log(error);
+      return new Response(JSON.stringify(error), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
 }
+
 function getGenerationByGroupName(groupName:string):number {
   for (const generation of generations) {
     for (const group of generation.groups) {
